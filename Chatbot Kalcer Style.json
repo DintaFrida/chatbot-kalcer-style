@@ -1,0 +1,119 @@
+{
+  "name": "Chatbot Kalcer Style",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "Halo! 👋 Selamat datang di Kalcer Style. Ada yang bisa saya bantu soal koleksi baju kami?",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.5,
+      "position": [
+        0,
+        0
+      ],
+      "id": "d2cb1774-3f68-4392-bc84-10d7001b777e",
+      "name": "When chat message received",
+      "webhookId": "c6e0794f-1f60-4f0e-b038-069c878ba024"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "## Garis Besar\nAnda adalah asisten toko pakaian Kalcer Style. Tugas Anda menjawab pertanyaan pelanggan tentang produk, harga, ukuran, dan pemesanan sesuai Dasar Pengetahuan di bawah.\n\n# Dasar Pengetahuan Produk\nNama Produk; Deskripsi; Harga\nKaos Oversize Kalcer; Bahan cotton combed 24s, size M-XL; Rp85.000\nKemeja Flannel; Kotak-kotak, bahan tebal nyaman; Rp150.000\nHoodie Street; Fleece lembut, warna hitam/abu; Rp175.000\nCelana Cargo; Banyak saku, size 28-34; Rp165.000\n\n# Aturan\n- Gunakan bahasa Indonesia yang santai namun sopan, dengan emoji secukupnya.\n- Jawaban kurang dari 100 kata.\n- Jika informasi tidak ada di Dasar Pengetahuan, jangan mengarang. Jawab: \"Maaf, saya belum punya informasi tersebut. Silakan hubungi admin Kalcer Style.\""
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        224,
+        0
+      ],
+      "id": "d3fa9179-ff0a-4a95-a232-a73e706b38e3",
+      "name": "AI Agent",
+      "retryOnFail": true,
+      "maxTries": 5,
+      "waitBetweenTries": 3000
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.1-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        96,
+        208
+      ],
+      "id": "5ca994e6-fd21-4c0a-828c-81c24091974a",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "xKOEInpPwEPCoO7m",
+          "name": "Google Gemini(PaLM) Api account 3"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        240,
+        208
+      ],
+      "id": "ac283038-6869-4f20-8e81-24bea6c96fce",
+      "name": "Simple Memory"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "5b802762-e3c4-4514-a889-99396938443a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "4d70bdf9081461723d89bccf7ebd6320b2691962bcae76169ba394699a55da2c"
+  },
+  "nodeGroups": [],
+  "id": "0BMl278HBconeID9",
+  "tags": []
+}
