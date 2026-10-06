@@ -1,0 +1,163 @@
+{
+  "name": "Chatbot Kalcer Style - Self Host",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "## Garis Besar\nAnda adalah asisten toko pakaian Kalcer Style. Tugas Anda menjawab pertanyaan pelanggan tentang produk dan harga.\n\n# Tools\nGoogle Sheets (Get row(s) in sheet): gunakan tool ini untuk mengambil data produk dan harga dari Dasar Pengetahuan Produk. Selalu gunakan tool ini sebelum menjawab pertanyaan tentang produk atau harga.\nData produk berisi kolom: Kategori Produk, Nama Produk, Deskripsi Produk, Harga.\n\n# Aturan\n- Jawab hanya berdasarkan data yang diambil dari tool Google Sheets.\n- Gunakan bahasa Indonesia yang santai namun sopan, dengan emoji secukupnya.\n- Jawaban kurang dari 100 kata.\n- Jika informasi tidak ada di data, jangan mengarang. Jawab: \"Maaf, saya belum punya informasi tersebut. Silakan hubungi admin Kalcer Style.\""
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        224,
+        0
+      ],
+      "id": "78a649fe-119d-4449-91ef-1d248880c1c6",
+      "name": "AI Agent",
+      "retryOnFail": true,
+      "maxTries": 5,
+      "waitBetweenTries": 3000
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.1-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        96,
+        208
+      ],
+      "id": "8c1f66b7-446b-44fd-8fc2-4174bcbe0fdf",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "xKOEInpPwEPCoO7m",
+          "name": "Google Gemini(PaLM) Api account 3"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        240,
+        208
+      ],
+      "id": "62dde97a-d4bc-4976-8d08-580e1921f444",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1Y3xwups08Is2IZ_8A2GEDKuMAeXgdF8GFt6DOoUPNR0",
+          "mode": "list",
+          "cachedResultName": "Data Produk Kalcer Style",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Y3xwups08Is2IZ_8A2GEDKuMAeXgdF8GFt6DOoUPNR0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Y3xwups08Is2IZ_8A2GEDKuMAeXgdF8GFt6DOoUPNR0/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        384,
+        208
+      ],
+      "id": "28b26459-7a0c-4504-9875-c91f0c77279e",
+      "name": "Get row(s) in sheet in Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "JUOO9K5a2cwZ705q",
+          "name": "Google Sheets account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "Halo! 👋 Selamat datang di Kalcer Style. Ada yang bisa saya bantu soal produk dan harga kami?",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.5,
+      "position": [
+        0,
+        0
+      ],
+      "id": "9de820c1-5aa0-4d39-a7d0-21790c4d9fae",
+      "name": "When chat message received",
+      "webhookId": "22d049c4-d172-4d8e-87f8-1a2529e9cb3e"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet in Google Sheets": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "3e303e51-2aff-4073-855b-29ec113cff12",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "4d70bdf9081461723d89bccf7ebd6320b2691962bcae76169ba394699a55da2c"
+  },
+  "nodeGroups": [],
+  "id": "8cLCCDR71tkbyzxz",
+  "tags": []
+}
